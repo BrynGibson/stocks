@@ -4,20 +4,39 @@ import pandas as pd
 from pathlib import Path
 from timeit import default_timer as timer
 from datetime import timedelta
+import sys
+
+if len(sys.argv) != 2:
+    print("add subreddit arg")
+    sys.exit()
+
+
 
 api = PushshiftAPI()
 
-base_path = Path.home()/"Desktop/stonks"
+base_path = Path.home()/"stonks"
 data_path = base_path/"data"
 Path.mkdir(base_path, exist_ok=True)
 Path.mkdir(data_path, exist_ok=True)
 
-start_date = datetime.date(year=2020, month=5, day=3)
-dates = pd.date_range(start=start_date, end=datetime.datetime.now())
+subreddit = sys.argv[1]
 
-subreddit = "pennystocks"
+
+
+
 out_path = data_path / subreddit
 Path.mkdir(out_path, exist_ok=True)
+
+done_files = list(out_path.glob("*.csv"))
+if len(done_files) > 0:
+    date_csvs = [d.name.split("_")[-1] for d in done_files]
+    dates = [d.split(".")[0] for d in date_csvs]
+    dates = pd.DatetimeIndex(dates)
+    start_date = dates.max() - timedelta(days=1)
+
+else:
+    start_date = datetime.date(year=2019, month=1, day=1)
+dates = pd.date_range(start=start_date, end=datetime.datetime.now())
 
 start = timer()
 
@@ -53,7 +72,7 @@ for i in range(0, len(dates) -1):
         except:
             continue
     comments_df = pd.DataFrame(content, columns=['author', 'id', 'url', 'score', 'text', 'date'])
-    comments_df.to_csv(out_path / f"{subreddit}_comments_{dates[i].date()}.csv")
+    comments_df.to_csv(out_path / f"{subreddit}_comments_{dates[i].date()}.csv", encoding="utf-8")
 
 
     if i % 5 == 0:
