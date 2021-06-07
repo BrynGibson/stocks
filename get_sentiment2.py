@@ -10,13 +10,12 @@ from datetime import timedelta
 
 
 def get_sentiment(text):
-    MAX_LEN = 160
+
     class_names = [-1, 0, 1]
 
     encoded_new = tokenizer.encode_plus(
                             text,                      # Sentence to encode.
-                            add_special_tokens = True,        # Add '[CLS]' and '[SEP]'
-                            max_length = MAX_LEN,             # Pad & truncate all sentences.
+                            add_special_tokens = True,        # Add '[CLS]' and '[SEP]'            # Pad & truncate all sentences.
                             padding = True,
                             return_attention_mask = True,     # Construct attn. masks.
                             return_tensors = 'pt',
@@ -48,16 +47,16 @@ def get_sentiment(text):
 
 def sent_file(f):
     df = pd.read_csv(f, index_col=0)
-    df = df.dropna(subset=["parsed"])
-    sented = []
+    df = df.dropna(subset=["cleaned"])
 
-    for i in df["parsed"]:
-        sentences = ast.literal_eval(i)
-        post = []
-        for s in sentences:
-            post.append((s, get_sentiment(s)))
-            sented.append(str(post))
-    df["sentiment"] = sented
+    df["sentiment"] = df["cleaned"].apply(get_sentiment)
+    # sented = []
+    #
+    # for i in df["cleaned"]:
+    #
+    #     sented.append(get_sentiment(i))
+    #
+    # df["sentiment"] = sented
 
     df.to_csv(out_path / f.name)
 
@@ -67,7 +66,7 @@ if __name__ == "__main__":
     base_path = Path(r'C:\Users\sloth\stonks\data')
 
     sub_red = "pennystocks"
-    parsed_path = base_path / "parsed"
+    parsed_path = base_path / "clean"
 
     out_path = base_path / "sentiment" / sub_red
 

@@ -12,7 +12,7 @@ def remove_urls (vTEXT):
 base_path = Path(r'C:\Users\sloth\stonks\data')
 
 sub_red = "pennystocks"
-out_path = base_path / "parsed" / sub_red
+out_path = base_path / "clean" / sub_red
 
 Path.mkdir(out_path, exist_ok=True, parents=True)
 
@@ -22,8 +22,8 @@ sub_path = base_path/sub_red
 
 files = set(sub_path.glob("*.csv"))
 
-done_files = set(out_path.glob("*.csv"))
-files = files - done_files
+# done_files = set(out_path.glob("*.csv"))
+# files = files - done_files
 
 
 
@@ -31,22 +31,19 @@ files = files - done_files
 
 def sent_df(f):
 
-    def sentencize(text):
-        doc = nlp(text, disable=bad_pipe)
-        sents = [remove_urls(s.text.strip()) for s in doc.sents]
-        return sents
-
     df = pd.read_csv(f, index_col=0)
     df = df.dropna(subset=["text"])
-    parsed = []
-    nlp = spacy.load("en_core_web_sm")
-    bad_pipe = ["transformer", "tagger", "ner", "attribute_ruler", "lemmatizer"]
+    clean = []
+
+    df = df.drop(df.loc[df["text"] == "[removed]"].index)
+    df = df.drop(df.loc[df["text"] == "[deleted]"].index)
+    df = df.drop(df.loc[df["score"] < 0].index)
+
     for i in df["text"]:
+        clean.append(remove_urls(i))
+    df["cleaned"] = clean
 
-        parsed.append(sentencize(i))
-    df["parsed"] = parsed
-
-    df.to_csv(out_path/f.name)
+    df.to_csv(out_path/f.name, encoding="utf-8")
 
 
 # with Pool(6) as p:
