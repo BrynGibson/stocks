@@ -43,7 +43,7 @@ def get_entities(post):
     entities = set()
 
     split = sentencize(post)
-    sents = [Sentence(s) for s in split]
+    sents = [Sentence(s) for s in split if s]
     tagger.predict(sents)
     for s in sents:
         orgs = [n.text for n in s.get_spans("ner")]
@@ -54,6 +54,7 @@ def get_entities(post):
 
 def tag_file(f):
     start = timer()
+    print(f"starting file {f.name}")
 
     df = pd.read_csv(f, index_col=0)
 
@@ -62,3 +63,6 @@ def tag_file(f):
     df.to_csv(out_path/f.name, encoding="utf-8")
     end = timer()
     print(f"one file took {timedelta(seconds=end - start)}")
+
+for f in files:
+    tag_file(f)

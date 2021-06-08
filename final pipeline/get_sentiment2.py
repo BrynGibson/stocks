@@ -15,7 +15,8 @@ def get_sentiment(text):
 
     encoded_new = tokenizer.encode_plus(
                             text,                      # Sentence to encode.
-                            add_special_tokens = True,        # Add '[CLS]' and '[SEP]'            # Pad & truncate all sentences.
+                            add_special_tokens = True,
+                            max_length=512,# Add '[CLS]' and '[SEP]'            # Pad & truncate all sentences.
                             padding = True,
                             return_attention_mask = True,     # Construct attn. masks.
                             return_tensors = 'pt',
