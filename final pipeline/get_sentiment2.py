@@ -58,15 +58,17 @@ def sent_file(f):
     #
     # df["sentiment"] = sented
 
-    df.to_csv(out_path / f.name)
+    df.to_csv(out_path / f.name, encoding="utf-8")
 
 if __name__ == "__main__":
 
 
-    base_path = Path(r'C:\Users\sloth\stonks\data')
+    #base_path = Path('~/stonks/data')
+    base_path = Path('C:/Users/sloth/stonks/data')
 
     sub_red = "pennystocks"
     parsed_path = base_path / "clean"
+
 
     out_path = base_path / "sentiment" / sub_red
 

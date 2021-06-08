@@ -23,3 +23,4 @@ files = files - done_files
 tickers_path = Path("./data/listing_status.csv")
 
 tickers_df = pd.read_csv(tickers_path)
+
