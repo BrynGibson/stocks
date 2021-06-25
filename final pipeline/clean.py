@@ -12,7 +12,7 @@ def remove_bad_chars (vTEXT):
 #base_path = Path('~/stonks/data')
 base_path = Path('C:/Users/sloth/stonks/data')
 
-sub_red = "stocks"
+sub_red = "investing"
 out_path = base_path / "clean" / sub_red
 
 Path.mkdir(out_path, exist_ok=True, parents=True)
@@ -33,14 +33,16 @@ def sent_df(f):
 
     df["cleaned"] = df["text"].apply(remove_bad_chars)
 
-    try:
-        df.to_csv(out_path/f.name, encoding="utf-8")
-    except:
-        print(f"error {f}")
+
+    df.to_csv(out_path/f.name, encoding="utf-8")
+
 
 
 for (i, f) in enumerate(files):
-    sent_df(f)
+    try:
+        sent_df(f)
+    except:
+        print(f"error {f}")
 
     if i % 10 == 0:
         print(f"{i} files done out of {len(files)}")

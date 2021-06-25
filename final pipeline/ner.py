@@ -20,13 +20,10 @@ Path.mkdir(out_path, exist_ok=True, parents=True)
 
 sub_path = base_path/"sentiment"/sub_red
 
-files = set(sub_path.glob("*.csv"))
 
-done_files = set(out_path.glob("*.csv"))
-files = files - done_files
 
 # load tagger
-tagger = SequenceTagger.load("flair/ner-english-large")
+tagger = SequenceTagger.load("flair/ner-english-fast")
 
 nlp = spacy.load("en_core_web_sm")
 bad_pipe = ["transformer", "tagger", "ner", "attribute_ruler", "lemmatizer"]
@@ -64,5 +61,12 @@ def tag_file(f):
     end = timer()
     print(f"one file took {timedelta(seconds=end - start)}")
 
-for f in files:
-    tag_file(f)
+dates = pd.date_range(start='1/1/2021', end='1/04/2021')
+
+for date in dates:
+    files = set(sub_path.glob(f"*_{str(date).split()[0]}.csv"))
+
+    done_files = set(out_path.glob("*.csv"))
+    files = files - done_files
+    for f in files:
+        tag_file(f)
