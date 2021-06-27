@@ -7,6 +7,8 @@ import io
 from pathlib import Path
 import ast
 
+ticks = ["idex", "amc", "gme", "bb", "uso", "uco", "tsla", "nio"]
+
 base_path = Path.home()/"stonks/data"
 data_path = base_path / "counted"
 
@@ -61,13 +63,6 @@ def count_mentions(ticker, date):
         for i in sent_df.index:
             ents = sent_df["entities"].loc[i]
 
-            if ents:
-                print(date)
-               # print(set([e.lower() for e in ents]))
-                print(names)
-                if names.intersection(set([e.lower() for e in ents])):
-                    print("ASDF")
-
             if names.intersection(set([e.lower() for e in ents])):
 
                 sentiment = sent_df["sentiment"].loc[i]
@@ -100,6 +95,8 @@ def build_dataset(ticker):
 
     return df
 
-gme_df = build_dataset("frsx")
 
-gme_df.to_csv(out_path/"clsk.csv")
+for tick in ticks:
+    gme_df = build_dataset(tick)
+
+    gme_df.to_csv(out_path/f"{tick}.csv")
